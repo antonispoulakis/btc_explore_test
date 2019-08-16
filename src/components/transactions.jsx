@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import _ from "lodash";
-import "../App.css";
 
 // import Web3 from "web3";
-const blockexplorer = require("blockchain.info/blockexplorer").enableCors(false).usingNetwork(3);
+const blockexplorer = require("blockchain.info/blockexplorer").usingNetwork(3);
 
 const Transactions = () => {
   // const web3 = new Web3();
@@ -27,7 +26,9 @@ const Transactions = () => {
 
     console.log(res);
     const items = res.txs.map((item, key) => (
-      <li key={item.hash}>{item.hash}</li>
+      <button className="list-group-item list-group-item-action" key={item.hash}>
+        {item.hash}
+      </button>
     ));
 
     SetTxses(items);
@@ -41,10 +42,16 @@ const Transactions = () => {
     <div className="Transactions">
       <header className="App-header">
         {!_.isEmpty(txses) ? (
-          <div style={{padding: 5}}>
-            <button onClick={unLoadTransactions}> Unload Transactions</button>
-            <h2>Transactions: </h2>
-            <ul>{txses}</ul>
+          <div style={{ padding: 5 }}>
+            <button
+              type="button"
+              className="btn btn-outline-primary btn-sm"
+              onClick={unLoadTransactions}>
+              {" "}
+              Unload Transactions
+            </button>
+            <h2>Transaction addresses: </h2>
+            <div className="list-group">{txses}</div>
           </div>
         ) : (
           <div>
@@ -53,7 +60,11 @@ const Transactions = () => {
             ) : (
               <h2>Click below to load transactions:</h2>
             )}
-            <button disabled={loadingTransactions} onClick={loadTransactions}>
+            <button
+              type="button"
+              className="btn btn-outline-primary btn-sm"
+              disabled={loadingTransactions}
+              onClick={loadTransactions}>
               Load Transactions
             </button>
           </div>
