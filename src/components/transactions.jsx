@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import _ from "lodash";
 
 // import Web3 from "web3";
-const blockexplorer = require("blockchain.info/blockexplorer").usingNetwork(3);
 
 const Transactions = () => {
   // const web3 = new Web3();
@@ -22,16 +21,18 @@ const Transactions = () => {
 
   const loadTransactions = async () => {
     setLoadingTransactions(true);
-    const res = await blockexplorer.getMultiAddress(addresses);
+    // @todo: use websocket to read from rabbitmq consumer
 
-    console.log(res);
-    const items = res.txs.map((item, key) => (
-      <button className="list-group-item list-group-item-action" key={item.hash}>
-        {item.hash}
-      </button>
-    ));
+    // const res = await blockexplorer.getMultiAddress(addresses);
 
-    SetTxses(items);
+    // console.log(res);
+    // const items = res.txs.map((item, key) => (
+    //   <button className="list-group-item list-group-item-action" key={item.hash}>
+    //     {item.hash}
+    //   </button>
+    // ));
+
+    // SetTxses(items);
     setLoadingTransactions(false);
   };
   const unLoadTransactions = () => {
