@@ -1,73 +1,71 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import _ from "lodash";
 
-// import Web3 from "web3";
+import { w3cwebsocket as W3CWebSocket } from "websocket";
 
 const Transactions = () => {
-  // const web3 = new Web3();
-  const addresses = [
-    "2MwcVyhWzUrS6AK8mwAZPjBfeQqtdEGgeSg",
-    "2NE7cEdVPFPrVviMvnQYGiNfeTMZnokHu23",
-    "2MtcSCijSWDruTq316PNV8onKzeq4amMPb3",
-    "2N2u2dMHKr4B7CMPQNptxEqrGWu9fVfCA5m",
-    "2N2C6oBBvrC8Kan4bREcvPQHLUE9FpgCY6g"
-  ];
-  const [txses, SetTxses] = useState([]);
-  const [loadingTransactions, setLoadingTransactions] = useState(false);
+  const [transactions, SetTransactions] = useState([]);
+  const [newTransaction, setNewTransaction] = useState(null);
 
-  // useEffect(() => {
-  //   loadTransactions();
-  // }, []);
+  useEffect(() => {
+    const client = new W3CWebSocket("ws://127.0.0.1:8080");
+    client.onopen = () => {
+      console.log("WebSocket Client Connected");
+      client.send("ready");
+    };
+    client.onmessage = message => {
+      let transaction = null;
+      try {
+        transaction = JSON.parse(message.data);
+      } catch (e) {
+        console.log("message was not json");
+      }
+      if (transaction) {
+        setNewTransaction(transaction);
+        client.send("next");
+      } if (message.data === "empty") {
+        client.send("ready");
+      }
+    };
+  }, []);
 
-  const loadTransactions = async () => {
-    setLoadingTransactions(true);
-    // @todo: use websocket to read from rabbitmq consumer
-
-    // const res = await blockexplorer.getMultiAddress(addresses);
-
-    // console.log(res);
-    // const items = res.txs.map((item, key) => (
-    //   <button className="list-group-item list-group-item-action" key={item.hash}>
-    //     {item.hash}
-    //   </button>
-    // ));
-
-    // SetTxses(items);
-    setLoadingTransactions(false);
-  };
-  const unLoadTransactions = () => {
-    SetTxses([]);
-  };
+  useEffect(() => {
+    if (!newTransaction) {
+      return;
+    }
+    if (!_.find(transactions, tr => tr.hash === newTransaction.hash)) {
+      console.log("pushing " + newTransaction.hash);
+      SetTransactions(transactions => [...transactions, newTransaction]);
+    } else {
+      console.log("duplicate transaction detected");
+    }
+  }, [newTransaction]);
 
   return (
     <div className="Transactions">
       <header className="App-header">
-        {!_.isEmpty(txses) ? (
+        {!_.isEmpty(transactions) ? (
           <div style={{ padding: 5 }}>
-            <button
-              type="button"
-              className="btn btn-outline-primary btn-sm"
-              onClick={unLoadTransactions}>
-              {" "}
-              Unload Transactions
-            </button>
-            <h2>Transaction addresses: </h2>
-            <div className="list-group">{txses}</div>
+            <h2>Transactions with tokens: </h2>
+            <div className="list-group">
+              {transactions.map(item => (
+                <button
+                  className="list-group-item list-group-item-action"
+                  key={item.hash}
+                  onClick={() =>
+                    window.open(
+                      `https://www.blockchain.com/btctest/tx/${item.hash}`,
+                      "_blank"
+                    )
+                  }>
+                  {item.hash} - {item.tokens}
+                </button>
+              ))}
+            </div>
           </div>
         ) : (
           <div>
-            {loadingTransactions ? (
-              <h2>Loading transactions...</h2>
-            ) : (
-              <h2>Click below to load transactions:</h2>
-            )}
-            <button
-              type="button"
-              className="btn btn-outline-primary btn-sm"
-              disabled={loadingTransactions}
-              onClick={loadTransactions}>
-              Load Transactions
-            </button>
+            <h2>Waiting for Transactions</h2>
           </div>
         )}
       </header>
