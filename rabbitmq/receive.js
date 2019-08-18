@@ -11,7 +11,7 @@ amqp.connect("amqp://localhost", function(error0, connection) {
       throw error1;
     }
 
-    const queue = "hello";
+    const queue = "transactions";
 
     channel.assertQueue(queue, {
       durable: false
@@ -21,8 +21,20 @@ amqp.connect("amqp://localhost", function(error0, connection) {
 
     channel.consume(
       queue,
-      function(msg) {
-        console.log(" [x] Received %s", msg.content.toString());
+      (msg) => {
+        // let item = {};
+        try {
+          const transaction = JSON.parse(msg.content.toString());
+          const tokens = transaction.size * 10;
+          const deliverable = {
+            hash: transaction.hash,
+            tokens
+          }
+          console.log(" [x] Received %s", deliverable);
+
+        } catch(e) {
+          console.log(e);
+        }
       },
       {
         noAck: true
