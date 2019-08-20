@@ -5,12 +5,11 @@ const WebSocket = require("ws");
 
 const wss = new WebSocket.Server({ port: 8080 });
 
-let shouldDeliverDirectly = true;
 const queue = "transactions";
 const deliverables = [];
 
 wss.on("connection", ws => {
-  shouldDeliverDirectly = true;
+  let shouldDeliverDirectly = true;
   ws.on("message", message => {
     if (message === "next") {
       if (deliverables.length > 0) {
@@ -35,31 +34,25 @@ wss.on("connection", ws => {
           " [*] Waiting for messages in %s. To exit press CTRL+C",
           queue
         );
-        channel.consume(
-          queue,
-          msg => {
-            try {
-              const transaction = JSON.parse(msg.content.toString());
-              const tokens = transaction.size * 10;
-              const deliverable = {
-                ...transaction,
-                tokens
-              };
-              console.log(" [x] Received %s", deliverable.hash);
-              if (shouldDeliverDirectly) {
-                ws.send(JSON.stringify(deliverable));
-                shouldDeliverDirectly = false;
-              } else {
-                deliverables.push(deliverable);
-              }
-            } catch (e) {
-              console.log(e);
+        channel.consume(queue, msg => {
+          try {
+            const transaction = JSON.parse(msg.content.toString());
+            const tokens = transaction.size * 10;
+            const deliverable = {
+              ...transaction,
+              tokens
+            };
+            console.log(" [x] Received %s", deliverable.hash);
+            if (shouldDeliverDirectly) {
+              ws.send(JSON.stringify(deliverable));
+              shouldDeliverDirectly = false;
+            } else {
+              deliverables.push(deliverable);
             }
-          },
-          {
-            noAck: true
+          } catch (e) {
+            console.log(e);
           }
-        );
+        });
         return Promise.resolve();
       } else {
         return Promise.reject();
