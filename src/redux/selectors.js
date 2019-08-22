@@ -17,6 +17,7 @@ export const initWebSocket = () => {
       console.log("message was not json");
     }
     if (transaction) {
+      console.log("received transaction: " + transaction.hash);
       await store.dispatch(receiveTransaction(transaction));
       // receiveTransaction(transaction);
       client.send("next");

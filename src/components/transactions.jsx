@@ -5,11 +5,8 @@ import { connect } from "react-redux";
 import { initWebSocket, getTransactions } from "../redux/selectors";
 import Transaction from "./Transaction";
 
-// import { w3cwebsocket as W3CWebSocket } from "websocket";
 
 const Transactions = ({ transactions }) => {
-  // const [transactions, SetTransactions] = useState([]);
-  // const [newTransaction, setNewTransaction] = useState(null);
 
   useEffect(() => {
     initWebSocket();
@@ -22,8 +19,8 @@ const Transactions = ({ transactions }) => {
           <div style={{ padding: 5 }}>
             <h2>Transactions with tokens: </h2>
             <div className="list-group">
-              {transactions.map(transaction => (
-                <Transaction key={transaction.hash} transaction={transaction}/>
+              {transactions.map((transaction, index) => (
+                <Transaction key={index} transaction={transaction}/>
               ))}
             </div>
           </div>
@@ -38,7 +35,6 @@ const Transactions = ({ transactions }) => {
 };
 
 const mapStateToProps = state => {
-  // const { visibilityFilter } = state;
   const transactions = getTransactions(state);
 
   return {

@@ -1,3 +1,5 @@
+import _ from "lodash";
+
 import { RECEIVE_TRANSACTION, CLEAR_TRANSACTIONS } from "../actionTypes";
 
 const initialState = {
@@ -10,7 +12,9 @@ export default function(state = initialState, action) {
       const { transaction } = action.payload;
       return {
         ...state,
-        transactions: [...state.transactions, transaction]
+        transactions: !_.find(state.transactions, tx => tx.hash === transaction.hash)
+          ? [...state.transactions, transaction]
+          : state.transactions
       };
     }
     case CLEAR_TRANSACTIONS: {
