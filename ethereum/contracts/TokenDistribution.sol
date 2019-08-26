@@ -1,4 +1,4 @@
-pragma solidity >=0.4.22 <0.6.0;
+pragma solidity ^0.5.7;
 
 import "./CappedMintableToken.sol";
 import "@openzeppelin/contracts/ownership/Ownable.sol";

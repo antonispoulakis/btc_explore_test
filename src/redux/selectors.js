@@ -1,6 +1,5 @@
-import { w3cwebsocket as W3CWebSocket } from "websocket";
-
-import { receiveTransaction } from "./actions";
+import {w3cwebsocket as W3CWebSocket} from "websocket";
+import {receiveTransaction} from "./actions";
 import store from "./store";
 
 export const initWebSocket = () => {
@@ -19,7 +18,6 @@ export const initWebSocket = () => {
     if (transaction) {
       console.log("received transaction: " + transaction.hash);
       await store.dispatch(receiveTransaction(transaction));
-      // receiveTransaction(transaction);
       client.send("next");
     }
     if (message.data === "empty") {

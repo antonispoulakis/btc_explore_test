@@ -1,13 +1,10 @@
-import React, { useEffect } from "react";
+import React, {useEffect} from "react";
 import _ from "lodash";
-import { connect } from "react-redux";
-
-import { initWebSocket, getTransactions } from "../redux/selectors";
+import {connect} from "react-redux";
+import {initWebSocket, getTransactions} from "../redux/selectors";
 import Transaction from "./Transaction";
 
-
-const Transactions = ({ transactions }) => {
-
+const Transactions = ({transactions}) => {
   useEffect(() => {
     initWebSocket();
   }, []);
@@ -16,11 +13,11 @@ const Transactions = ({ transactions }) => {
     <div className="Transactions">
       <header className="App-header">
         {!_.isEmpty(transactions) ? (
-          <div style={{ padding: 5 }}>
+          <div style={{padding: 5}}>
             <h2>Transactions with tokens: </h2>
             <div className="list-group">
               {transactions.map((transaction, index) => (
-                <Transaction key={index} transaction={transaction}/>
+                <Transaction key={index} transaction={transaction} />
               ))}
             </div>
           </div>

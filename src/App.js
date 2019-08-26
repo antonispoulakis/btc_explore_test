@@ -1,7 +1,6 @@
 import React from "react";
 import "bootstrap/dist/css/bootstrap.css";
 import "./App.css";
-
 import Transactions from "./components/Transactions";
 
 const App = () => {

@@ -1,8 +1,7 @@
-import React, { memo } from "react";
+import React, {memo} from "react";
+import {connect} from "react-redux";
 
-import { connect } from "react-redux";
-
-const Transaction = memo(({ transaction }) => (
+const Transaction = memo(({transaction}) => (
   <button
     className="list-group-item list-group-item-action py-2"
     key={transaction.hash}

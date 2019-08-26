@@ -1,8 +1,8 @@
-import { RECEIVE_TRANSACTION, CLEAR_TRANSACTIONS } from "./actionTypes";
+import {RECEIVE_TRANSACTION, CLEAR_TRANSACTIONS} from "./actionTypes";
 
 export const receiveTransaction = transaction => ({
   type: RECEIVE_TRANSACTION,
-  payload: { transaction }
+  payload: {transaction}
 });
 
 export const clearTransactions = () => ({
